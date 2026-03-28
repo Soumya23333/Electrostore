@@ -21,6 +21,7 @@ const Shop = () => {
 
   // ✅ Go to Product Details page
   const handleProductClick = (product) => {
+    window.scrollTo(0, 0);
     navigate(`/product/${product._id}`);
   };
 

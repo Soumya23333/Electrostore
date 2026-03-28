@@ -1,5 +1,5 @@
 // src/App.js
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useUser } from "@clerk/clerk-react";
 
@@ -34,6 +34,12 @@ function AppWrapper() {
   const [successMessage, setSuccessMessage] = useState("");
   const { user } = useUser();
   const isAdmin = user && user.id === ADMIN_ID;
+  const location = useLocation();
+
+  // Scroll to top when route changes
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
 
   useEffect(() => {
     if (successMessage) {
