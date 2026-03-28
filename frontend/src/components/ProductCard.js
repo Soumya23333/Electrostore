@@ -1,22 +1,40 @@
-import ProductCard from "../components/ProductCard";
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import "../index.css";
 
-function Home() {
-  const products = [
-    { title: "Apple AirPods Pro", desc: "2nd Gen", price: "399.99", img: "https://via.placeholder.com/200" },
-    { title: "Canon EOS R5", desc: "Mirrorless Camera", price: "3899.99", img: "https://via.placeholder.com/200" },
-    { title: "PlayStation 5", desc: "Gaming Console", price: "499.99", img: "https://via.placeholder.com/200" },
-  ];
+function ProductCard({ id, name, title, price, image, img, description, desc }) {
+  const navigate = useNavigate();
+  const [isAnimating, setIsAnimating] = useState(false);
+
+  const productId = id || name || title;
+  const productImage = image || img;
+  const productDescription = description || desc;
+
+  const handleClick = () => {
+    setIsAnimating(true);
+    // Wait for animation to complete before navigating
+    setTimeout(() => {
+      navigate(`/product/${productId}`);
+    }, 300);
+  };
 
   return (
-    <div className="products">
-      <h2>Popular Products</h2>
-      <div className="product-grid">
-        {products.map((p, i) => (
-          <ProductCard key={i} {...p} />
-        ))}
+    <div 
+      className={`product-card ${isAnimating ? "animate-out" : ""}`}
+      onClick={handleClick}
+      style={{ cursor: "pointer" }}
+    >
+      <div className="product-image">
+        <img src={productImage} alt={name || title} />
+      </div>
+      <div className="product-info">
+        <h3>{name || title}</h3>
+        {productDescription && <p className="description">{productDescription}</p>}
+        <p className="price">₹{price}</p>
+        <button className="view-details-btn">View Details</button>
       </div>
     </div>
   );
 }
 
-export default Home;
+export default ProductCard;

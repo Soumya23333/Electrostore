@@ -1,15 +1,25 @@
 import { useNavigate } from "react-router-dom";
 import productsData from "../data/ProductData";
-import React from "react";
+import React, { useState } from "react";
 
 const PopularProducts = () => {
   const navigate = useNavigate();
+  const [animatingId, setAnimatingId] = useState(null);
 
   if (!productsData || productsData.length === 0) {
     return <h2 style={{ textAlign: "center" }}>⚠ No products found</h2>;
   }
 
   const popularItems = productsData.slice(0, 8);
+
+  // ✅ Navigate to Product Details with animation
+  const handleProductClick = (product) => {
+    setAnimatingId(product.id);
+    setTimeout(() => {
+      window.scrollTo(0, 0);
+      navigate(`/product/${product.id}`);
+    }, 300);
+  };
 
   // ✅ Navigate to Shop page
   const handleGoToShop = () => {
@@ -35,18 +45,30 @@ const PopularProducts = () => {
         {popularItems.map((item) => (
           <div
             key={item.id}
-            onClick={handleGoToShop}
+            onClick={() => handleProductClick(item)}
             style={{
               textAlign: "left",
               cursor: "pointer",
-              transition: "transform 0.2s ease",
+              transition: animatingId === item.id ? "none" : "transform 0.2s ease, box-shadow 0.3s ease",
+              transform: animatingId === item.id ? "scale(0.8) translateY(-30px)" : "scale(1)",
+              opacity: animatingId === item.id ? 0 : 1,
+              borderRadius: "8px",
+              padding: "12px",
+              background: animatingId === item.id ? "transparent" : "#fff",
+              animation: animatingId === item.id ? "none" : "fadeInScale 0.3s ease",
             }}
-            onMouseEnter={(e) =>
-              (e.currentTarget.style.transform = "scale(1.03)")
-            }
-            onMouseLeave={(e) =>
-              (e.currentTarget.style.transform = "scale(1)")
-            }
+            onMouseEnter={(e) => {
+              if (animatingId !== item.id) {
+                e.currentTarget.style.transform = "scale(1.03)";
+                e.currentTarget.style.boxShadow = "0 8px 24px rgba(255, 75, 43, 0.15)";
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (animatingId !== item.id) {
+                e.currentTarget.style.transform = "scale(1)";
+                e.currentTarget.style.boxShadow = "none";
+              }
+            }}
           >
             {/* Image box */}
             <div
@@ -58,6 +80,7 @@ const PopularProducts = () => {
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
+                borderRadius: "8px",
               }}
             >
               <img
@@ -67,6 +90,7 @@ const PopularProducts = () => {
                   maxWidth: "100%",
                   maxHeight: "180px",
                   objectFit: "contain",
+                  transition: "transform 0.3s ease",
                 }}
               />
             </div>
